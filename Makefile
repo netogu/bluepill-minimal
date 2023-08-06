@@ -5,8 +5,8 @@
 TARGET = stm32f1_minimal
 BUILD_DIR = build/
 
-DEBUG = -ggdb
-OPT = -Og
+DEBUG = 1
+OPT = -0g
 DEBUG_PROBE = openocd
 DEBUG_PROBE_TARGET = src/target_openocd.cfg
 LDSCRIPT = src/linker_script.ld
@@ -21,13 +21,13 @@ src/main.c
 
 C_INCLUDES = \
 -Isrc/drv \
--Iexternal/CMSIS/CMSIS/Core/Include \
+-Iexternal/CMSIS/Core/Include \
 -Iexternal/CMSIS/Device/STM32F1/Include 
 #-------------------------------------------------- 
 # CFLAGS
 #-------------------------------------------------- 
 CFLAGS = $(C_INCLUDES)
-CFLAGS += -Wall $(OPT) $(DEBUG)
+CFLAGS += -Wall
 CFLAGS += -mcpu=cortex-m3 -mthumb
 #CFLAGS += -nostdlib
 CFLAGS += --specs=nano.specs
@@ -67,7 +67,7 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
-	vpath %.c $(sort $(dir $(C_SOURCES)))
+vpath %.c $(sort $(dir $(C_SOURCES)))
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) $< -o $@
@@ -95,9 +95,5 @@ clean:
 .PHONY: flash
 flash:
 	$(DEBUG_PROBE) -f $(DEBUG_PROBE_TARGET) -c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
-debug:
-	$(DEBUG_PROBE) -f $(DEBUG_PROBE_TARGET) 
 
-gdb:
-	gdb-multiarch $(BUILD_DIR)/$(TARGET).elf -ex "target extended-remote localhost:3333" 
 # *** EOF ***

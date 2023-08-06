@@ -166,7 +166,7 @@ void default_handler(void) {
 }
 
 // Defining _exit function to avoid linker error
-void _exit(int) {
+void _exit(int var) {
     while(1);
 }
 

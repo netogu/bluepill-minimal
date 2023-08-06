@@ -9,7 +9,7 @@ DEBUG = -ggdb
 OPT = -Og
 DEBUG_PROBE = openocd
 DEBUG_PROBE_TARGET = src/target_openocd.cfg
-LDSCRIPT = src\linker_script.ld
+LDSCRIPT = src/linker_script.ld
 
 C_SOURCES = \
 external/CMSIS/Device/STM32F1/Source/Templates/system_stm32f1xx.c \
@@ -67,7 +67,7 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES)))
+	vpath %.c $(sort $(dir $(C_SOURCES)))
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) $< -o $@

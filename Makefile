@@ -5,10 +5,10 @@
 TARGET = stm32f1_minimal
 BUILD_DIR = build/
 
-DEBUG = 1
-OPT = -0g
+DEBUG = -ggdb
+OPT = -Og
 DEBUG_PROBE = openocd
-DEBUG_PROBE_TARGET = target_openocd.cfg
+DEBUG_PROBE_TARGET = src/target_openocd.cfg
 LDSCRIPT = src\linker_script.ld
 
 C_SOURCES = \
@@ -16,7 +16,6 @@ external/CMSIS/Device/STM32F1/Source/Templates/system_stm32f1xx.c \
 src/drv/drv_rcc.c \
 src/drv/drv_gpio.c \
 src/drv/drv_flash.c \
-src/usb_device.c \
 src/startup.c \
 src/main.c 
 
@@ -28,7 +27,7 @@ C_INCLUDES = \
 # CFLAGS
 #-------------------------------------------------- 
 CFLAGS = $(C_INCLUDES)
-CFLAGS += -Wall
+CFLAGS += -Wall $(OPT) $(DEBUG)
 CFLAGS += -mcpu=cortex-m3 -mthumb
 #CFLAGS += -nostdlib
 CFLAGS += --specs=nano.specs
@@ -96,5 +95,9 @@ clean:
 .PHONY: flash
 flash:
 	$(DEBUG_PROBE) -f $(DEBUG_PROBE_TARGET) -c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
+debug:
+	$(DEBUG_PROBE) -f $(DEBUG_PROBE_TARGET) 
 
+gdb:
+	gdb-multiarch $(BUILD_DIR)/$(TARGET).elf -ex "target extended-remote localhost:3333" 
 # *** EOF ***
